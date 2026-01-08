@@ -1,0 +1,6 @@
+Name       = Overworld Encounters
+Version    = 1.1.1
+Essentials = 21.1
+Requires   = rainefallUtils
+Link       = https://eeveeexpo.com/resources/1779/
+Credits    = Voltseon, JulieHaru

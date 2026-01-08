@@ -1,0 +1,17 @@
+Name = Autosave Feature v21
+Version = 1.5
+Website = https://reliccastle.com/resources/848
+Credits = Caruban
+Essentials = 21.1
+
+#===============================================================================
+# v 1.5
+#===============================================================================
+# - Added blacklist and whitelist array to determine when to trigger or skip autosave while entering specified maps
+# - Fixed the save trigger when transferring between 2 unconnected outdoor maps
+#===============================================================================
+# v 1.4
+#===============================================================================
+# - Added variables to customize autosave visual indicator
+# - Fixed the skipped fade out screen after loading autosave's saved file
+# - Updated flashing effect code

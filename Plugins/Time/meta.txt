@@ -1,0 +1,5 @@
+Name = Unreal Time System
+Version = 1.2.2
+Website = https://www.pokecommunity.com/showthread.php?t=285831
+Credits = FL
+Essentials = 21.1
