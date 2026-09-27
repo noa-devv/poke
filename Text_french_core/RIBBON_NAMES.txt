@@ -1,0 +1,144 @@
+﻿# To localize this text for a particular language, please
+# translate every second line of this file.
+#-------------------------------
+[RIBBON_NAMES]
+Cool Ribbon
+Cool ruban
+Cool Ribbon Super
+Cool Ruban Super
+Cool Ribbon Hyper
+Cool Ruban Hyper
+Cool Ribbon Master
+Cool Maître du Ruban
+Beauty Ribbon
+Ruban de beauté
+Beauty Ribbon Super
+Ruban de beauté Super
+Beauty Ribbon Hyper
+Ruban de beauté Hyper
+Beauty Ribbon Master
+Maître du ruban de beauté
+Cute Ribbon
+Joli ruban
+Cute Ribbon Super
+Joli ruban super
+Cute Ribbon Hyper
+Mignon ruban hyper
+Cute Ribbon Master
+Mignon Maître du Ruban
+Smart Ribbon
+Ruban intelligent
+Smart Ribbon Super
+Ruban intelligent Super
+Smart Ribbon Hyper
+Ruban intelligent Hyper
+Smart Ribbon Master
+Maître du ruban intelligent
+Tough Ribbon
+Ruban résistant
+Tough Ribbon Super
+Ruban résistant Super
+Tough Ribbon Hyper
+Ruban résistant Hyper
+Tough Ribbon Master
+Maître du ruban difficile
+Cool Ribbon Great
+Cool ruban génial
+Cool Ribbon Ultra
+Ruban cool ultra
+Beauty Ribbon Great
+Ruban de beauté génial
+Beauty Ribbon Ultra
+Ruban de beauté Ultra
+Cute Ribbon Great
+Joli ruban génial
+Cute Ribbon Ultra
+Ruban mignon ultra
+Smart Ribbon Great
+Ruban intelligent génial
+Smart Ribbon Ultra
+Ruban intelligent Ultra
+Tough Ribbon Great
+Ruban résistant, génial
+Tough Ribbon Ultra
+Ruban résistant ultra
+Winning Ribbon
+Ruban gagnant
+Victory Ribbon
+Ruban de victoire
+Ability Ribbon
+Ruban de capacité
+Great Ability Ribbon
+Ruban de grande capacité
+Double Ability Ribbon
+Ruban double capacité
+Multi Ability Ribbon
+Ruban multi-capacités
+Pair Ability Ribbon
+Ruban de capacité de paire
+World Ability Ribbon
+Ruban de capacité mondiale
+Champion Ribbon
+Ruban de champion
+Sinnoh Champ Ribbon
+Ruban de champion Sinnoh
+Record Ribbon
+Ruban d'enregistrement
+Event Ribbon
+Ruban d'événement
+Legend Ribbon
+Ruban Légende
+Gorgeous Ribbon
+Magnifique ruban
+Royal Ribbon
+Ruban Royal
+Gorgeous Royal Ribbon
+Magnifique ruban royal
+Alert Ribbon
+Ruban d'alerte
+Shock Ribbon
+Ruban de choc
+Downcast Ribbon
+Ruban baissé
+Careless Ribbon
+Ruban négligent
+Relax Ribbon
+Ruban détendez-vous
+Snooze Ribbon
+Répéter le ruban
+Smile Ribbon
+Ruban de sourire
+Footprint Ribbon
+Ruban d'empreinte
+Artist Ribbon
+Ruban d'artiste
+Effort Ribbon
+Ruban d'effort
+Birthday Ribbon
+Ruban d'anniversaire
+Special Ribbon
+Ruban spécial
+Classic Ribbon
+Ruban classique
+Premier Ribbon
+Ruban Premier
+Souvenir Ribbon
+Ruban souvenir
+Wishing Ribbon
+Ruban de souhaits
+National Ribbon
+Ruban national
+Country Ribbon
+Ruban de pays
+Battle Champion Ribbon
+Ruban de champion de bataille
+Regional Champion Ribbon
+Ruban de champion régional
+Earth Ribbon
+Ruban de Terre
+World Ribbon
+Ruban du monde
+National Champion Ribbon
+Ruban de champion national
+World Champion Ribbon
+Ruban de champion du monde

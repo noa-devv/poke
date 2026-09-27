@@ -311,10 +311,22 @@ Land,21
     10,VULPIX_1,11,14
 #-------------------------------
 [043] # Ville 1
-Land,21
-    15,CORSOLA,15,18
-    5,STARYU,15,17
-    10,MEOWTH_1,11,14
-    10,PIKACHU,11,14
-    10,SANDSHREW_1,11,14
-    10,VULPIX_1,11,14
+Water,2
+    60,TENTACOOL,14,19
+    30,REMORAID,15,16
+    10,WINGULL,14,16
+OldRod
+    90,MAGIKARP,16,19
+    10,FEEBAS,16,19
+#-------------------------------
+[077] # Route 1
+Land,10
+    30,PATRAT,2,4
+    30,SKWOVET,2,4
+    15,BUNNELBY,2,4
+    15,KRICKETOT,2,4
+    5,ROOKIDEE,2,4
+    5,VENIPEDE,2,4
+PokeRadar,20
+    50,STARLY,2,4
+    100,SHINX,2,4

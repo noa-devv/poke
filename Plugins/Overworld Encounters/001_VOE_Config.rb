@@ -18,15 +18,16 @@ class VoltseonsOverworldEncounters
   # Chance at which the Pokémon is shiny. Use 0 to disable overworld shinies. Set to (SETTINGS::SHINY_POKEMON_CHANCE / 65536) for normal odds.
   SHINY_RATE = 512
   # Whether the game should log when an encounter is being spawned / despawned (this can only be seen in Debug Mode).
-  LOG_SPAWNS = true
+  LOG_SPAWNS = false
   # If the option is enabled for the player to disable Overworld Encounters in the game settings.
   DISABLE_SETTINGS = true
   # How many tiles the encounters can be away from the player (shiny Pokémon are ignored)
   MAX_DISTANCE = 12
   # How many encounters will be spawned on each map (mapId => numberOfEvents) (0 = default)
   MAX_PER_MAP = {
-	  0  => 5,
-    22 => 1
+	0  => 4,
+	22 => 1,
+	77 => 3
   }
   # Whether the events used for encounters should be deleted after they disappear (if set to false could cause lag after a while)
   DELETE_EVENTS = true

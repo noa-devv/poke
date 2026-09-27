@@ -1,0 +1,100 @@
+﻿# To localize this text for a particular language, please
+# translate every second line of this file.
+#-------------------------------
+[TRAINER_TYPE_NAMES]
+Pokémon Trainer
+Dresseur Pokémon
+Rival
+Rival
+Aroma Lady
+Aromathérapeute
+Beauty
+Canon
+Biker
+Motard
+Bird Keeper
+Ornithologue
+Bug Catcher
+Scout
+Burglar
+Pillard
+Channeler
+Exorciste
+Cue Ball
+Loubard
+Engineer
+Mécano
+Fisherman
+Pêcheur
+Gambler
+Joueur
+Gentleman
+Gentleman
+Hiker
+Montagnard
+Juggler
+Jongleur
+Lady
+Mademoiselle
+Painter
+Artiste
+Poké Maniac
+Pokémaniac
+Pokémon Breeder
+Éleveuse
+Professor
+Professeur Pokémon
+Rocker
+Électricien
+Ruin Maniac
+Ruinophile
+Sailor
+Marin
+Scientist
+Scientifique
+Super Nerd
+Intello
+Tamer
+Dompteur
+Black Belt
+Karatéka
+Crush Girl
+Fille Baston
+Camper
+Fan de Camping
+Picnicker
+Fan de Pique-Nique
+Cool Trainer
+Topdresseur
+Youngster
+Gamin
+Lass
+Fillette
+Pokémon Ranger
+Pokémon Ranger
+Psychic
+Kinésiste
+Swimmer
+Nageur
+Tuber
+Garçon à la Bouée
+Cool Couple
+Complices
+Crush Kin
+Duo Baston
+Sis and Bro
+Frère et Sœur
+Twins
+Jumelles 
+Young Couple
+Jeune Couple
+Team Rocket
+Sbire Rocket
+Rocket Boss
+Chef de la Team Rocket
+Gym Leader
+Champion d'Arène
+Elite Four
+Conseil 4
+Champion
+Maître
