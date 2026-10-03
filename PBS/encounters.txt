@@ -320,13 +320,22 @@ OldRod
     10,FEEBAS,16,19
 #-------------------------------
 [077] # Route 1
-Land,10
-    30,PATRAT,2,4
-    30,SKWOVET,2,4
-    15,BUNNELBY,2,4
-    15,KRICKETOT,2,4
+Land,15
+    15,PATRAT,2,4
+    15,SKWOVET,2,4
+    10,BUNNELBY,2,4
+    10,KRICKETOT,2,4
     5,ROOKIDEE,2,4
     5,VENIPEDE,2,4
+    10,BIDOOF,2,4
+    10,STUNKY,2,4
+    5,PIDOVE,2,4
+    5,BLITZLE,2,4
+    5,VENONAT,2,4
+    1,WOOBAT,2,4
+    1,FOONGUS,2,4
+    1,NOIBAT,2,4
+    1,ROLYCOLY,2,4
 PokeRadar,20
     50,STARLY,2,4
     100,SHINX,2,4

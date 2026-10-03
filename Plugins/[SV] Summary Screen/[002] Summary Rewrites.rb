@@ -352,7 +352,7 @@ class PokemonSummary_Scene
         status = GameData::Status.count
       end
       if status >= 0
-        imagepos.push(["Graphics/UI/statuses", 10, 44, 0, 20 * status, 44, 20])
+        imagepos.push(["Graphics/UI/statuses", 10, 44, 0, STATUS_ICON_HEIGHT * status, 44, 20])
       end
       if @pokemon.pokerusStage == 2
         xpos = status >= 0 ? 58 : 10
@@ -1251,7 +1251,7 @@ class PokemonSummary_Scene
 end
 
 class PokemonPartyPanel
-  STATUS_ICON_HEIGHT = 20
+  STATUS_ICON_HEIGHT = 16
   
   def draw_status
     return if @pokemon.egg? || (@text && @text.length > 0)

@@ -59,17 +59,17 @@ end
 GameData::DataboxStyle.register({
   :id            => :Basic,
   :name          => _INTL("Basic"),
-  :sprite_x      => [262, -16],
+  :sprite_x      => [284, -16],
   :sprite_y      => [154, 12],
   :sprite_base_x => [34, 16],
   :offset_x      => [[0, 8, -8, 0],    [0, 16, -8, 8, -16, 0]],
-  :offset_y      => [[-38, -8, 8, 38], [-80, -10, -34, 36, 12, 82]],
-  :hp_offset     => [[46, 30], [90, 26]],
-  :exp_offset    => [114, 40],
-  :name_pos      => [[138, 6, :right], [22, 2, :left]],
+  :offset_y      => [[-38, -10, 8, 38], [-80, -10, -34, 36, 12, 82]],
+  :hp_offset     => [[68, 30], [90, 30]],
+  :exp_offset    => [136, 40],
+  :name_pos      => [[160, 6, :right], [22, 2, :left]],
   :owned_icon    => [2, 3],
-  :shiny_icon    => [[154, 5],  [2, 23]],
-  :status_icon   => [[182, 28], [18, 24]],
+  :shiny_icon    => [[174, 5],  [2, 28]],
+  :status_icon   => [[204, 28], [18, 28]],
   :special_icon  => [[-34, 12], [276, 20]]
 })
 
@@ -299,29 +299,113 @@ class Battle::Scene::PokemonDataBox
   # Draws all text elements on a databox based on style.
   #-----------------------------------------------------------------------------
   def draw_style_text
-    textpos = []
-    namePos = @displayPos[:name]
-    if @battler.index.even?
-      case @battler.gender
-      when 0 then textpos.push(["♂", *namePos, MALE_BASE_COLOR, STYLE_SHADOW_COLOR, @nameColors[2]])
-      when 1 then textpos.push(["♀", *namePos, FEMALE_BASE_COLOR, STYLE_SHADOW_COLOR, @nameColors[2]])
-      end
-      textpos.push([@battler.name, namePos[0] - 16, namePos[1], namePos[2], *@nameColors])
-      textpos.push([@battler.level.to_s, namePos[0] + 58, namePos[1], :left, STYLE_BASE_COLOR, STYLE_SHADOW_COLOR])
-    elsif 
-      if !@battler.wild?
-        display_name = @battler.name
-      elsif @title
-        display_name = _INTL(@title, @battler.name)
-      elsif defined?(@battler.pokemon.memento)
-        display_name = @battler.name_title(false)
-      else
-        display_name = @battler.name
-      end
-      textpos.push([display_name, *namePos, *@nameColors])
-    end
-    pbDrawTextPositions(self.bitmap, textpos)
-  end
+	  textpos = []
+	  namePos = @displayPos[:name]
+
+	  if @battler.index.even?
+		#---------------------------------------------------------------------------
+		# Player Pokémon
+		#---------------------------------------------------------------------------
+
+		# Gender
+		case @battler.gender
+		when 0
+		  textpos.push([
+			"♂", *namePos,
+			MALE_BASE_COLOR,
+			STYLE_SHADOW_COLOR,
+			@nameColors[2]
+		  ])
+		when 1
+		  textpos.push([
+			"♀", *namePos,
+			FEMALE_BASE_COLOR,
+			STYLE_SHADOW_COLOR,
+			@nameColors[2]
+		  ])
+		end
+
+		# Pokémon name
+		textpos.push([
+		  @battler.name,
+		  namePos[0] - 16,
+		  namePos[1],
+		  namePos[2],
+		  *@nameColors
+		])
+
+		# Level - same font/style as opponent
+		textpos.push([
+		  _INTL("Lv. {1}", @battler.level),
+		  namePos[0] + 26,
+		  namePos[1],
+		  :left,
+		  STYLE_BASE_COLOR,
+		  STYLE_SHADOW_COLOR
+		])
+
+	  else
+		#---------------------------------------------------------------------------
+		# Opponent Pokémon
+		#---------------------------------------------------------------------------
+
+		if !@battler.wild?
+		  display_name = @battler.name
+		elsif @title
+		  display_name = _INTL(@title, @battler.name)
+		elsif defined?(@battler.pokemon.memento)
+		  display_name = @battler.name_title(false)
+		else
+		  display_name = @battler.name
+		end
+
+		# Level - 2 pixels lower than the name
+		textpos.push([
+		  _INTL("Lv. {1}", @battler.level),
+		  namePos[0] - 15,
+		  namePos[1] + 4,
+		  :left,
+		  STYLE_BASE_COLOR,
+		  STYLE_SHADOW_COLOR
+		])
+
+		# Name - moved to the right
+		opponentNameX = namePos[0] + 70
+
+		textpos.push([
+		  display_name,
+		  opponentNameX,
+		  namePos[1] + 3,
+		  :left,
+		  *@nameColors
+		])
+
+		# Gender - immediately to the right of the name
+		gender = case @battler.gender
+				 when 0 then "♂"
+				 when 1 then "♀"
+				 else nil
+				 end
+
+		if gender
+		  name_width = self.bitmap.text_size(display_name).width
+		  gender_x = opponentNameX + name_width + 4
+
+		  gender_color = (@battler.gender == 0) ? MALE_BASE_COLOR : FEMALE_BASE_COLOR
+
+		  textpos.push([
+			gender,
+			gender_x,
+			namePos[1] + 3,
+			:left,
+			gender_color,
+			STYLE_SHADOW_COLOR
+		  ])
+		end
+	  end
+
+	  pbDrawTextPositions(self.bitmap, textpos)
+	end
 
   #-----------------------------------------------------------------------------
   # Draws all images on a databox based on style.
@@ -329,7 +413,6 @@ class Battle::Scene::PokemonDataBox
   def draw_style_icons
     imagepos = []
     namePos = @displayPos[:name]
-    imagepos.push([@path + "/overlay_lv", namePos[0] + 34, namePos[1] + 2]) if @battler.index.even?
     imagepos.push([@path + "/icon_own", *@displayPos[:owned]]) if @battler.owned? && @battler.opposes?(0)
     imagepos.push([@path + "/shiny", *@displayPos[:shiny]]) if @battler.shiny?
     if @battler.status != :NONE

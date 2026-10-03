@@ -25,7 +25,7 @@ module Settings
   # species you are encountering for the first time. When true, type effectiveness 
   # will always be displayed, even for new species.
   #-----------------------------------------------------------------------------
-  SHOW_TYPE_EFFECTIVENESS_FOR_NEW_SPECIES = false
+  SHOW_TYPE_EFFECTIVENESS_FOR_NEW_SPECIES = true
 end
 
 
@@ -37,7 +37,7 @@ class Battle::Scene
   # White text.
   #-----------------------------------------------------------------------------
   BASE_LIGHT     = Color.new(248, 248, 248)
-  SHADOW_LIGHT   = Color.new(32, 32, 32)
+  SHADOW_LIGHT   = Color.new(48, 48, 48)
   #-----------------------------------------------------------------------------
   # Black text.
   #-----------------------------------------------------------------------------
@@ -47,12 +47,12 @@ class Battle::Scene
   # Green text. Used to display bonuses.
   #-----------------------------------------------------------------------------
   BASE_RAISED    = Color.new(50, 205, 50)
-  SHADOW_RAISED  = Color.new(9, 121, 105)
+  SHADOW_RAISED  = Color.new(48, 48, 48)
   #-----------------------------------------------------------------------------
   # Red text. Used to display penalties.
   #-----------------------------------------------------------------------------
   BASE_LOWERED   = Color.new(248, 72, 72)
-  SHADOW_LOWERED = Color.new(136, 48, 48)
+  SHADOW_LOWERED = Color.new(48, 48, 48)
 
   #-----------------------------------------------------------------------------
   # Aliased to initilize UI elements.

@@ -107,7 +107,7 @@ module BattleCreationHelperMethods
     battle.noBag              = battleRules["noBag"]            if !battleRules["noBag"].nil?
     battle.introText          = battleRules["battleIntroText"]  if !battleRules["battleIntroText"].nil?
     battle.slideSpriteStyle   = battleRules["slideSpriteStyle"] if !battleRules["slideSpriteStyle"].nil?
-    battle.databoxStyle       = battleRules["databoxStyle"]     if !battleRules["databoxStyle"].nil?
+    battle.databoxStyle = battleRules["databoxStyle"] || :Basic
     if !battleRules["midbattleScript"].nil?
       script = battleRules["midbattleScript"]
       if script.is_a?(Symbol)

@@ -116,3 +116,24 @@ Pokemon = CHARIZARD,63
     Item = SITRUSBERRY
 Pokemon = BLASTOISE,63
     Item = SITRUSBERRY
+
+#-------------------------------
+[LADY,Jeanne]
+Pokemon = GEODUDE,15
+    Name = Rocky
+    Moves = BULLDOZE
+    AbilityIndex = 1
+    Item = SITRUSBERRY
+    Gender = male
+    IV = 20,20,20,20,20,20
+    Shiny = true
+    Ball = HEAVYBALL
+Pokemon = PIKACHU,15
+    Name = Pute
+    Moves = SPARK
+    AbilityIndex = 0
+    Item = SITRUSBERRY
+    Gender = male
+    IV = 20,20,20,20,20,20
+    Shiny = true
+    Ball = MASTERBALL

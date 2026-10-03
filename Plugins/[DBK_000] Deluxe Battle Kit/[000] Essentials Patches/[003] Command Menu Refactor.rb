@@ -130,9 +130,11 @@ class Battle::Scene::FightMenu < Battle::Scene::MenuBase
       if GET_MOVE_TEXT_COLOR_FROM_MOVE_BUTTON && moves[i].display_type(@battler)
         moveNameBase = button.bitmap.get_pixel(10, button.src_rect.y + 34)
       end
-      base   = @customUI ? @base_color   : moveNameBase
-      shadow = @customUI ? @shadow_color : TEXT_SHADOW_COLOR
-      textPos.push([moves[i].short_name, x, y, :center, base, shadow])
+      # base   = @customUI ? @base_color   : moveNameBase
+      # shadow = @customUI ? @shadow_color : TEXT_SHADOW_COLOR
+	  base   = Color.new(248, 248, 248)
+	  shadow = Color.new(48, 48, 48)
+      textPos.push([moves[i].short_name, x+20, y, :center, base, shadow, :outline])
     end
     pbDrawTextPositions(@overlay.bitmap, textPos)
   end

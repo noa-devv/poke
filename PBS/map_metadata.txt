@@ -397,6 +397,13 @@ Outdoor = true
 MapPosition = 1,13,16
 BattleBack = city
 #-------------------------------
+[043]   # Ville 1
+Name = Breulbourg
+Outdoor = true
+ShowArea = true
+MapPosition = 0,15,15
+BattleBack = plaine
+#-------------------------------
 [077]   # Route 1
 Name = Route 1
 Outdoor = true

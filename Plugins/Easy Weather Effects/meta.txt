@@ -1,0 +1,4 @@
+Name       = Easy Weather Effects
+Version    = 4.0.0
+Essentials = 21.1
+Credits = BloodyNeonz, TheOnlyFelicity, Carmaniac

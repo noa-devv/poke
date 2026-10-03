@@ -26,7 +26,7 @@ class Battle::Scene
         @sprites["info_icon#{b.index}"].pokemon = b.displayPokemon
         @sprites["info_icon#{b.index}"].visible = @enhancedUIToggle == :move
         @sprites["info_icon#{b.index}"].x = Graphics.width - 32 - (idx * 64)
-        @sprites["info_icon#{b.index}"].y = 48
+        @sprites["info_icon#{b.index}"].y = 110
         if b.dynamax?
           @sprites["info_icon#{b.index}"].set_dynamax_icon_pattern
         elsif b.tera?
@@ -93,8 +93,8 @@ class Battle::Scene
     bgnumber = (Settings::USE_MOVE_TYPE_BACKGROUNDS) ? typenumber + 1 : 0
     imagePos = [
       [@path + "move_bg",      xpos,       ypos,     0, bgnumber * 164, 512, 164],
-      ["Graphics/UI/types",    xpos + 282, ypos + 8, 0, typenumber * 28, 64, 28],
-      ["Graphics/UI/category", xpos + 350, ypos + 8, 0, category * 28, 64, 28]
+      ["Graphics/UI/types",    xpos + 296, ypos + 5, 0, typenumber * 28, 64, 28],
+      ["Graphics/UI/category", xpos + 296, ypos + 35, 0, category * 28, 64, 28]
     ]
     pbDrawMoveFlagIcons(xpos, ypos, move, imagePos)
     pbDrawTypeEffectiveness(xpos, ypos, move, type, imagePos)
@@ -193,15 +193,15 @@ class Battle::Scene
     displayPriority = (pri    == 0) ? "---" : (pri > 0) ? "+" + pri.to_s : pri.to_s
     displayChance   = (chance == 0) ? "---" : chance.ceil.to_s + "%"
     textPos.push(
-      [move.name,       xpos + 10,  ypos + 12, :left,   BASE_LIGHT, SHADOW_LIGHT, :outline],
-      [_INTL("Pow"),    xpos + 256, ypos + 40, :left,   BASE_LIGHT, SHADOW_LIGHT],
-      [displayPower,    xpos + 309, ypos + 40, :center, powBase,    powShadow],
-      [_INTL("Acc"),    xpos + 348, ypos + 40, :left,   BASE_LIGHT, SHADOW_LIGHT],
-      [displayAccuracy, xpos + 401, ypos + 40, :center, accBase,    accShadow],
-      [_INTL("Pri"),    xpos + 442, ypos + 40, :left,   BASE_LIGHT, SHADOW_LIGHT],
-      [displayPriority, xpos + 484, ypos + 40, :center, priBase,    priShadow],
-      [_INTL("Eff"),    xpos + 428, ypos + 12, :left,   BASE_LIGHT, SHADOW_LIGHT],
-      [displayChance,   xpos + 484, ypos + 12, :center, effBase,    effShadow]
+      [move.name,       xpos + 11,  ypos + 13, :left,   BASE_LIGHT, SHADOW_LIGHT, :outline],
+      [_INTL("Pui."),   xpos + 11, 	ypos + 41, :left,   BASE_LIGHT, SHADOW_LIGHT, :outline],
+      [displayPower,    xpos + 74, 	ypos + 41, :center, powBase,    powShadow,	  :outline],
+      [_INTL("Préc."),  xpos + 112, ypos + 41, :left,   BASE_LIGHT, SHADOW_LIGHT, :outline],
+      [displayAccuracy, xpos + 175, ypos + 41, :center, accBase,    accShadow,	  :outline],
+      [_INTL("Prio."),  xpos + 213, ypos + 13, :left,   BASE_LIGHT, SHADOW_LIGHT, :outline],
+      [displayPriority, xpos + 270, ypos + 13, :center, priBase,    priShadow,	  :outline],
+      [_INTL("Eff."),   xpos + 213, ypos + 41, :left,   BASE_LIGHT, SHADOW_LIGHT, :outline],
+      [displayChance,   xpos + 265, ypos + 41, :center, effBase,    effShadow,	  :outline]
     )
     textPos.push([bonus[0], xpos + 8, ypos + 132, :left, bonus[1], bonus[2], :outline]) if bonus
     pbDrawTextPositions(@enhancedUIOverlay, textPos)
@@ -213,8 +213,8 @@ class Battle::Scene
   # Draws the move flag icons for each move in the Move Info UI.
   #-----------------------------------------------------------------------------
   def pbDrawMoveFlagIcons(xpos, ypos, move, imagePos)
-    flagX = xpos + 6
-    flagY = ypos + 35
+    flagX = xpos + 360
+    flagY = ypos + 5
     icons = 0
     flags = move.flags.clone
     if GameData::Target.get(move.target).targets_foe
@@ -229,7 +229,7 @@ class Battle::Scene
       flag = "HighCriticalHitRate" if flag.include?("HighCriticalHitRate_")
       path = @path + "Move Flags/" + flag
       next if !pbResolveBitmap(path)
-      imagePos.push([path, flagX + (icons * 26), flagY])
+      #imagePos.push([path, flagX, flagY + (icons * 26)])
       icons += 1
     end
   end
@@ -254,7 +254,7 @@ class Battle::Scene
         elsif Effectiveness.super_effective?(value)    then effct = 3
         else effct = 4
         end
-        imagePos.push([@path + "move_effectiveness", Graphics.width - 64 - (idx * 64), ypos - 76, effct * 64, 0, 64, 76])
+        imagePos.push([@path + "move_effectiveness", Graphics.width - 64 - (idx * 64), ypos + 4, effct * 64, 0, 64, 76])
         @sprites["info_icon#{b.index}"].visible = true
       else
         @sprites["info_icon#{b.index}"].visible = false
