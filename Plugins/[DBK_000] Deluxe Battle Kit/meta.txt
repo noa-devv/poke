@@ -13,4 +13,4 @@ Conflicts  = Elite Battle: DX,1.0
 Conflicts  = SOS Battles,1.0
 Conflicts  = Rejuv-style Bosses,1.0
 Website    = https://lucidious89-tutorials.gitbook.io/deluxe-battle-kit-tutorial
-Credits    = Lucidious89
+Credits    = Lucidious89, no_

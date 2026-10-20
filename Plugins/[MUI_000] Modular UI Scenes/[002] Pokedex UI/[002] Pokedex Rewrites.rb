@@ -126,12 +126,6 @@ class PokemonPokedexInfo_Scene
             pbPlayDecisionSE
             @show_battled_count = !@show_battled_count
             dorefresh = true
-          when :page_forms
-            if @available.length > 1
-              pbPlayDecisionSE
-              pbChooseForm
-              dorefresh = true
-            end
           end
         else
           dorefresh = true

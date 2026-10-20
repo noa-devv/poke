@@ -1,252 +1,79 @@
 #===============================================================================
 # Main Data Page display
 #===============================================================================
-class PokemonPokedexInfo_Scene 
+class PokemonPokedexInfo_Scene
   #-----------------------------------------------------------------------------
   # Controls for navigating the Data page.
+  # The only selectable buttons on this page are Abilities, Moves and Items.
   #-----------------------------------------------------------------------------
   def pbDataPageMenu
     pbPlayDecisionSE
-    pbDrawDataNotes
+    @data_page_menu_active = true
+    @cursor = :ability
+    # Redraw immediately so the default Abilities selection is visible on entry.
+    drawPage(@page)
     species_data = GameData::Species.get_species_form(@species, @form)
-    special_form, _check_form, _check_item = pbGetSpecialFormData(species_data)
     species_id = species_data.id
+    buttons = [:ability, :moves, :item]
     loop do
       Graphics.update
       Input.update
       pbUpdate
-      #-------------------------------------------------------------------------
       if Input.trigger?(Input::BACK)
         pbPlayCancelSE
         @sprites["data_overlay"].bitmap.clear
+        @sprites["datapokemon"].visible = false
+        @data_page_menu_active = false
         break
-      #-------------------------------------------------------------------------
       elsif Input.trigger?(Input::USE)
         case @cursor
-        #-----------------------------------------------------------------------
-        # Displays move lists.
         when :moves
           next if !$player.owned?(species_id)
-          pbChooseMove(species_data, special_form)
-        #-----------------------------------------------------------------------
-        # Displays item/ability lists.
+          pbChooseMove(species_data, nil)
         when :item, :ability
           next if !$player.owned?(species_id)
           pbChooseDataList
-        #-----------------------------------------------------------------------
-        # Displays compatible species lists.
-        when :general, :family, :stats, :habitat, :egg, :shape
-          next if !$player.owned?(species_id)
-          pbChooseSpeciesDataList
         end
         break if @forceRefresh
-      #-------------------------------------------------------------------------
       elsif Input.repeat?(Input::UP)
-        old_cursor = @cursor
-        case @cursor
-        when :general then @cursor = :ability
-        when :stats   then @cursor = :general
-        when :family  then @cursor = :general
-        when :habitat then @cursor = :family
-        when :shape   then @cursor = :family
-        when :egg     then @cursor = :family
-        when :item    then @cursor = :family
-        when :ability then @cursor = :egg
-        when :moves   then @cursor = :habitat
-        end
-        if @cursor != old_cursor
-          pbPlayCursorSE
-          pbDrawDataNotes
-        end
-      #-------------------------------------------------------------------------
+        idx = buttons.index(@cursor) || 0
+        idx = (idx - 1) % buttons.length
+        @cursor = buttons[idx]
+        pbPlayCursorSE
+        drawPage(@page)
       elsif Input.repeat?(Input::DOWN)
-        old_cursor = @cursor
-        case @cursor
-        when :general then @cursor = :family
-        when :stats   then @cursor = :general
-        when :family  then @cursor = :habitat
-        when :habitat then @cursor = :moves
-        when :shape   then @cursor = :moves
-        when :egg     then @cursor = :ability
-        when :item    then @cursor = :ability
-        when :ability then @cursor = :general
-        when :moves   then @cursor = :general
-        end
-        if @cursor != old_cursor
-          pbPlayCursorSE
-          pbDrawDataNotes
-        end
-      #-------------------------------------------------------------------------
-      elsif Input.repeat?(Input::LEFT)
-        old_cursor = @cursor
-        case @cursor
-        when :general then @cursor = :general
-        when :stats   then @cursor = :habitat
-        when :family  then @cursor = :stats
-        when :habitat then @cursor = :shape
-        when :shape   then @cursor = :egg
-        when :egg     then @cursor = :item
-        when :item    then @cursor = :stats
-        when :ability then @cursor = :stats
-        when :moves   then @cursor = :ability
-        end
-        if @cursor != old_cursor
-          pbPlayCursorSE
-          pbDrawDataNotes
-        end
-      #-------------------------------------------------------------------------
-      elsif Input.repeat?(Input::RIGHT)
-        old_cursor = @cursor
-        case @cursor
-        when :general then @cursor = :general
-        when :stats   then @cursor = :item
-        when :family  then @cursor = :stats
-        when :habitat then @cursor = :stats
-        when :shape   then @cursor = :habitat
-        when :egg     then @cursor = :shape
-        when :item    then @cursor = :egg
-        when :ability then @cursor = :moves
-        when :moves   then @cursor = :stats
-        end
-        if @cursor != old_cursor
-          pbPlayCursorSE
-          pbDrawDataNotes
-        end
+        idx = buttons.index(@cursor) || 0
+        idx = (idx + 1) % buttons.length
+        @cursor = buttons[idx]
+        pbPlayCursorSE
+        drawPage(@page)
       end
     end
     @forceRefresh = false
+    @sprites["datapokemon"].visible = false
     drawPage(@page)
   end
-  
+
   #-----------------------------------------------------------------------------
-  # Utility for generating lists of data related to a viewed species.
+  # Utility for generating the ability and held item lists for the viewed species.
   #-----------------------------------------------------------------------------
   def pbGenerateDataLists(species)
     @data_hash = {
-	  :species => species.id,
-      :general => [],
-      :habitat => [],
-      :shape   => [],
-      :stats   => [],
-      :egg     => [],
-      :family  => []
+      :species => species.id
     }
+
     #---------------------------------------------------------------------------
-    # Determines if this species should display species in compatible Egg Groups.
-    #---------------------------------------------------------------------------
-    eggSpecies = species
-    showCompatible = true
-    if species.egg_groups.include?(:Undiscovered)
-      evos = species.get_evolutions(true)
-      if evos.empty?
-        showCompatible = false
-      else
-        evo = GameData::Species.get(evos[0][0])
-        if !evo.egg_groups.include?(:Undiscovered)
-          eggSpecies = evo
-        else
-          showCompatible = false
-        end
-      end
-    end
-    #---------------------------------------------------------------------------
-    # Sorts all owned species into compatibility lists.
-    #---------------------------------------------------------------------------
-    family = species.get_family_species
-    blacklisted = [:PICHU_2, :GIMMIGHOUL_1].include?(species.id) ||
-                  species.species == :PIKACHU && (3..16).include?(species.form)
-    GameData::Species.each do |sp|
-      next if !sp.display_species?(@dexlist, species)
-      regional_form = sp.form > 0 && sp.is_regional_form?
-      base_form = (sp.form > 0) ? GameData::Species.get_species_form(sp.species, sp.base_pokedex_form) : nil
-      #-------------------------------------------------------------------------
-      # Compatible gender ratio.
-      if sp.gender_ratio == species.gender_ratio
-        skipForm = base_form && !regional_form && sp.gender_ratio == base_form.gender_ratio
-        @data_hash[:general] << sp.id if !skipForm
-      end
-      #-------------------------------------------------------------------------
-      # Compatible habitat.
-      if sp.habitat == species.habitat
-        skipForm = base_form && !regional_form && sp.habitat == base_form.habitat
-        @data_hash[:habitat] << sp.id if !skipForm
-      end
-      #-------------------------------------------------------------------------
-      # Compatible shape & color.
-      if sp.color == species.color && sp.shape == species.shape
-        skipForm = base_form && !regional_form && sp.color == base_form.color && sp.shape == base_form.shape
-        @data_hash[:shape] << sp.id if !skipForm
-      end
-      #-------------------------------------------------------------------------
-      # Compatible base stats.
-      if !base_form || regional_form || base_form && sp.base_stats != base_form.base_stats
-        GameData::Stat.each_main do |s|
-          next if sp.base_stats[s.id] != species.base_stats[s.id]
-          @data_hash[:stats] << sp.id
-          break
-        end
-      end
-      #-------------------------------------------------------------------------
-      # Family members.
-      next if blacklisted
-      if family.include?(sp.species)
-        if sp.species == species.species
-          special_form, _check_form, _check_item = pbGetSpecialFormData(sp)
-          next if !special_form
-        end
-        @data_hash[:family] << sp.id
-      end
-      #-------------------------------------------------------------------------
-      # Compatible egg groups.
-      if showCompatible
-        if base_form && !regional_form && sp.egg_groups == base_form.egg_groups
-          next if sp.moves == base_form.moves && sp.tutor_moves == base_form.tutor_moves
-        end
-        sp.egg_groups.each do |group|
-          case group
-          when :Ditto
-            next if eggSpecies.egg_groups.include?(:Ditto)
-            next if eggSpecies.egg_groups.include?(:Undiscovered)
-            @data_hash[:egg] << sp.id
-          else
-            next if eggSpecies.egg_groups.include?(:Undiscovered)
-            if eggSpecies.egg_groups.include?(:Ditto)
-              next if sp.egg_groups.include?(:Ditto)
-              next if sp.egg_groups.include?(:Undiscovered)
-              @data_hash[:egg] << sp.id
-            elsif eggSpecies.egg_groups.include?(group)
-              next if eggSpecies.gender_ratio == :Genderless
-              gender = sp.gender_ratio
-              next if gender == :Genderless
-              next if [:AlwaysMale, :AlwaysFemale].include?(gender) && gender == eggSpecies.gender_ratio
-              @data_hash[:egg] << sp.id 
-            end
-          end
-        end
-      end
-    end
-    @data_hash.each_key do |key|
-	  next if key == :species
-      list = @data_hash[key].clone
-      if key == :family
-        sortlist = species.get_family_species
-        @data_hash[key] = pbSortDataList(list, sortlist)
-      else
-        @data_hash[key] = pbSortDataList(list)
-      end
-    end
-    #---------------------------------------------------------------------------
-    # Generates list of this species' abilities.
+    # Generates the list of this species' abilities.
     #---------------------------------------------------------------------------
     @data_hash[:ability] = Hash.new { |key, value| key[value] = [] }
-    species.abilities.each do |a|
-      next if @data_hash[:ability][0].include?(a)	
-      @data_hash[:ability][0] << a
+    species.abilities.each do |ability|
+      next if @data_hash[:ability][0].include?(ability)
+      @data_hash[:ability][0] << ability
     end
-    species.hidden_abilities.each do |a|
-      next if @data_hash[:ability][0].include?(a)	
-      next if @data_hash[:ability][1].include?(a)	
-      @data_hash[:ability][1] << a
+    species.hidden_abilities.each do |ability|
+      next if @data_hash[:ability][0].include?(ability)
+      next if @data_hash[:ability][1].include?(ability)
+      @data_hash[:ability][1] << ability
     end
     case species.id
     when :GRENINJA
@@ -260,122 +87,59 @@ class PokemonPokedexInfo_Scene
         @data_hash[:ability][2] << :OWNTEMPO
       end
     end
+
     #---------------------------------------------------------------------------
-    # Generates list of this species' wild held items.
+    # Generates the list of this species' wild held items.
     #---------------------------------------------------------------------------
     @data_hash[:item] = Hash.new { |key, value| key[value] = [] }
-    special_form, _check_form, check_item = pbGetSpecialFormData(species)
-    if special_form && check_item
-      @data_hash[:item][0] = [check_item]
-    else
-      species.wild_item_common.each do |i|
-        next if @data_hash[:item][0].include?(i)
-        @data_hash[:item][0] << i
-      end
-      species.wild_item_uncommon.each do |i|
-        next if @data_hash[:item][0].include?(i)
-        next if @data_hash[:item][1].include?(i)
-        @data_hash[:item][1] << i
-      end
-      species.wild_item_rare.each do |i|
-        next if @data_hash[:item][0].include?(i)
-        next if @data_hash[:item][1].include?(i)
-        next if @data_hash[:item][2].include?(i)
-        @data_hash[:item][2] << i
-      end
+    species.wild_item_common.each do |item|
+      next if @data_hash[:item][0].include?(item)
+      @data_hash[:item][0] << item
+    end
+    species.wild_item_uncommon.each do |item|
+      next if @data_hash[:item][0].include?(item)
+      next if @data_hash[:item][1].include?(item)
+      @data_hash[:item][1] << item
+    end
+    species.wild_item_rare.each do |item|
+      next if @data_hash[:item][0].include?(item)
+      next if @data_hash[:item][1].include?(item)
+      next if @data_hash[:item][2].include?(item)
+      @data_hash[:item][2] << item
     end
   end
-  
-  #-----------------------------------------------------------------------------
-  # Utility for sorting all generated species lists in Pokedex order.
-  #-----------------------------------------------------------------------------
-  def pbSortDataList(list, sortlist = nil)
-    newSort = []
-    sortlist = @dexlist if sortlist.nil?
-    list.each do |id|
-      sp = GameData::Species.get(id).species
-      sortlist.each_with_index do |dex, i|
-        species = (dex.is_a?(Hash)) ? dex[:species] : dex
-        if species == sp
-          newSort[i] = [] if !newSort[i]
-          newSort[i].push(id)
-          break
-        end
-      end
-    end
-    newSort.compact!
-    newSort.flatten!
-    newSort.uniq!
-    return newSort
-  end
-  
-  #-----------------------------------------------------------------------------
-  # Utility for getting data related to special forms, such as Mega Evolutions.
-  #-----------------------------------------------------------------------------
-  def pbGetSpecialFormData(species)
-    check_form = 0
-    check_item = nil
-    special_form = nil
-    if species.form > 0
-      [:mega, :primal, :ultra, :gmax, :emax, :tera].each do |sym|
-        function = nil
-        special_form = nil
-        case sym
-        when :mega
-          if species.mega_stone || species.mega_move
-            special_form, check_form, check_item = sym, species.unmega_form, species.mega_stone
-            break
-          end
-        when :gmax
-          if defined?(species.gmax_move) && species.gmax_move
-            special_form, check_form, check_item = sym, species.ungmax_form, nil
-            break
-          end
-        when :primal then function = "getPrimalForm"
-        when :ultra  then function = "getUltraForm"     if PluginManager.installed?("[DBK] Z-Power")
-        when :emax   then function = "getEternamaxForm" if PluginManager.installed?("[DBK] Dynamax")
-        when :tera   then function = "getTerastalForm"  if PluginManager.installed?("[DBK] Terastallization")
-        end
-        next if function.nil?
-        if MultipleForms.hasFunction?(species.species, function)
-          dex_data = MultipleForms.call("getDataPageInfo", species)
-          next if !dex_data || species.form != dex_data[0]
-          special_form, check_form, check_item = sym, dex_data[1], dex_data[2]
-          break
-        end
-      end
-    end
-    return special_form, check_form, check_item
-  end
-  
+
   #-----------------------------------------------------------------------------
   # Draws the data page.
   #-----------------------------------------------------------------------------
   def drawPageData
-    base    = Color.new(248, 248, 248)
-    shadow  = Color.new(72, 72, 72)
-    path = Settings::POKEDEX_DATA_PAGE_GRAPHICS_PATH
+    @data_page_active = true
+    base   = Color.new(248, 248, 248)
+    shadow = Color.new(40, 40, 40)
+    path   = Settings::POKEDEX_DATA_PAGE_GRAPHICS_PATH
+    # Use the dedicated Data-page background so the old Pokedex layout is not
+    # left behind behind the new button/stat arrangement.
+    @sprites["background"].setBitmap(_INTL(path + "bg_data"))
     overlay = @sprites["overlay"].bitmap
     imagepos = []
     textpos = []
     owned = $player.owned?(@species)
     species_data = GameData::Species.get_species_form(@species, @form)
     pbGenerateDataLists(species_data) if @data_hash[:species] != species_data.id
-    @sprites["itemicon"].item = (owned && !@data_hash[:item].empty?) ? @data_hash[:item].values.last.last : nil
-    @gender = 1 if species_data.gender_ratio == :AlwaysFemale || species_data.form_name == _INTL("Female")
-    pbDrawDataNotes(:encounter)
+
     #---------------------------------------------------------------------------
-    # Draws species name & typing.
+    # Draws species name and typing.
     #---------------------------------------------------------------------------
-    textpos.push([species_data.name, 84,  56, :left, base, Color.black, :outline])
+    textpos.push([species_data.name, 114, 56, :left, base, Color.black, :outline])
     if owned
       species_data.types.each_with_index do |type, i|
         type_number = GameData::Type.get(type).icon_position
-        type_rect = Rect.new(0, type_number * 32, 96, 32)
-        type_x = (species_data.types.length == 1) ? 347 : 298 + (100 * i)
-        overlay.blt(type_x, 48, @typebitmap.bitmap, type_rect)
+        type_rect = Rect.new(0, type_number * 28, 64, 28)
+        type_x = ((315 + 512) - (64 + (species_data.types.length - 1) * 80)) / 2 + (80 * i)
+        overlay.blt(type_x, 50, @typebitmap2.bitmap, type_rect)
       end
     end
+
     #---------------------------------------------------------------------------
     # Draws gender icons.
     #---------------------------------------------------------------------------
@@ -390,132 +154,97 @@ class PokemonPokedexInfo_Scene
         gender = (@gender == 0) ? [1, 0] : [0, 1]
       end
     end
-    imagepos.push([path + "gender", 10, 48, 32 * gender[0],  0, 32, 32],
-                  [path + "gender", 44, 48, 32 * gender[1], 32, 32, 32])
-    #---------------------------------------------------------------------------
-    # Draws habitat icon.
-    #---------------------------------------------------------------------------
-    habitat = (owned) ? GameData::Habitat.get(species_data.habitat).icon_position : 0
-    imagepos.push([path + "habitats", 445, 174, 0, 48 * habitat, 64, 48])
-    #---------------------------------------------------------------------------
-    # Draws body shape icon.
-    #---------------------------------------------------------------------------
-    shape = GameData::BodyShape.get(species_data.shape).icon_position
-    imagepos.push(["Graphics/UI/Pokedex/icon_shapes", 375, 170, 0, 60 * shape, 60, 60])
-    #---------------------------------------------------------------------------
-    # Draws egg group icons.
-    #---------------------------------------------------------------------------
-    if owned
-      egg_groups = species_data.egg_groups
-      egg_groups = [:None] if species_data.gender_ratio == :Genderless && 
-                              !(egg_groups.include?(:Ditto) || egg_groups.include?(:Undiscovered))
-    else
-      egg_groups = [:None]
-    end
-    rectX = (Settings::ALT_EGG_GROUP_NAMES) ? 62 : 0
-    egg_groups.each_with_index do |group, i|
-      rectY = GameData::EggGroup.get(group).icon_position
-      group_y = (egg_groups.length == 1) ? 188 : 172 + 30 * i
-      imagepos.push([path + "egg_groups", 302, group_y, rectX, 28 * rectY, 62, 28])
-    end
-    #---------------------------------------------------------------------------
-    # Draws the base stats text and bars.
-    #---------------------------------------------------------------------------
-    textpos.push(
-      [_INTL("HP"),        12, 104, :left, base, shadow, :outline],
-      [_INTL("Attack"),    12, 132, :left, base, shadow, :outline],
-      [_INTL("Defense"),   12, 160, :left, base, shadow, :outline],
-      [_INTL("Sp. Atk"),   12, 188, :left, base, shadow, :outline],
-      [_INTL("Sp. Def"),   12, 216, :left, base, shadow, :outline],
-      [_INTL("Speed"),     12, 244, :left, base, shadow, :outline]
+    imagepos.push(
+      [path + "gender", 10, 48, 32 * gender[0], 0, 32, 32],
+      [path + "gender", 44, 48, 32 * gender[1], 32, 32, 32]
     )
-    stats_order = [:HP, :ATTACK, :DEFENSE, :SPECIAL_ATTACK, :SPECIAL_DEFENSE, :SPEED]
+
+    #---------------------------------------------------------------------------
+    # Draws the Pokémon sprites
+    #---------------------------------------------------------------------------
     if owned
-      stats_order.each_with_index do |s, i|
-        stat = species_data.base_stats[s]
-        w = stat * 100 / 254.0
-        w = 1 if w < 1
-        w = ((w / 2).round) * 2
-        imagepos.push([path + "overlay_stats", 106, 105 + i * 28, 0, i * 18, w, 18])
+      # Only reload the large sprite when the viewed Pokémon/form changes.
+      # Redrawing the selected button must not restart its animation/load.
+      sprite_key = [@species, @form]
+      if @data_pokemon_sprite_key != sprite_key
+        datapokemon = Pokemon.new(@species, 1, $player, false, false)
+        datapokemon.forced_form = @form
+        @sprites["datapokemon"].setPokemonBitmap(datapokemon)
+        @data_pokemon_sprite_key = sprite_key
       end
-    end
-    #---------------------------------------------------------------------------
-    # Draws Ability/Move button text.
-    #---------------------------------------------------------------------------
-    textpos.push([_INTL("Abilities"), 306, 253, :center, base, shadow, :outline],
-                 [_INTL("Moves"),     434, 253, :center, base, shadow, :outline])			  
-    #---------------------------------------------------------------------------
-    # Sets up sprites if the species is a special form.
-    #---------------------------------------------------------------------------
-    special_form, check_form, _check_item = pbGetSpecialFormData(species_data)
-    if special_form
-      imagepos.push([path + "evolutions", 234, ICONS_POS_Y - 34, 0, 64, 272, 64])
-      case special_form
-      when :mega        then imagepos.push(["Graphics/UI/Battle/icon_mega", 259, 49])
-      when :primal      then imagepos.push(["Graphics/UI/Battle/icon_primal_#{species_data.name}", 256, 47])
-      when :ultra       then imagepos.push([Settings::ZMOVE_GRAPHICS_PATH + "icon_ultra", 257, 47])
-      when :gmax, :emax then imagepos.push([Settings::DYNAMAX_GRAPHICS_PATH + "icon_dynamax", 256, 47])
-      when :tera
-        species_data.flags.each do |flag|
-          next if !flag[/^TeraType_(\w+)/i]
-          pos = GameData::Type.get($~[1].to_sym).icon_position
-          imagepos.push([Settings::TERASTAL_GRAPHICS_PATH + "tera_types", 257, 47, 0, pos * 32, 32, 32])
-          break
-        end
-      end
-      @sprites["familyicon0"].pbSetParams(@species, @gender, @form)
-      @sprites["familyicon0"].x = ICONS_RIGHT_DOUBLE
-      @sprites["familyicon0"].visible = true
-      @sprites["familyicon1"].pbSetParams(@species, @gender, check_form)
-      @sprites["familyicon1"].x = ICONS_LEFT_DOUBLE
-      @sprites["familyicon1"].visible = true
-      @sprites["familyicon2"].visible = false
+      @sprites["datapokemon"].visible = true
+      @sprites["movespokemonicon"].pbSetParams(@species, @gender, @form)
+
+      # Place the small species icon immediately to the right of the name.
+      name_width = overlay.text_size(species_data.name).width
+      @sprites["movespokemonicon"].x = 114 + name_width + 30
+      @sprites["movespokemonicon"].y = 65
+      @sprites["movespokemonicon"].visible = true
     else
-      #-------------------------------------------------------------------------
-      # Sets up sprites if the species is a single-stage species.
-      #-------------------------------------------------------------------------
-      prevo = species_data.get_previous_species
-      if prevo == species_data.species || @data_hash[:family].empty?
-        imagepos.push([path + "evolutions", 234, ICONS_POS_Y - 34, 0, 0, 272, 64])
-        @sprites["familyicon0"].pbSetParams(@species, @gender, @form)
-        @sprites["familyicon0"].x = ICONS_CENTER
-        @sprites["familyicon0"].visible = true
-        @sprites["familyicon1"].visible = false
-        @sprites["familyicon2"].visible = false
-      #-------------------------------------------------------------------------
-      # Sets up sprites if the species has multiple stages.
-      #-------------------------------------------------------------------------
-      else
-        form = (species_data.default_form >= 0) ? species_data.default_form : @form
-        prevo_data = GameData::Species.get_species_form(prevo, form)
-        stages = (species_data.get_baby_species == prevo) ? 1 : 2
-        imagepos.push([path + "evolutions", 234, ICONS_POS_Y - 34, 0, 64 * stages, 272, 64])
-        @sprites["familyicon0"].pbSetParams(@species, @gender, @form)
-        @sprites["familyicon0"].x = (stages == 1) ? ICONS_RIGHT_DOUBLE : ICONS_RIGHT_TRIPLE
-        @sprites["familyicon0"].visible = true
-        if $player.seen?(prevo)
-          @sprites["familyicon1"].pbSetParams(prevo, @gender, prevo_data.form)
-        else
-          @sprites["familyicon1"].species = nil
-        end
-        @sprites["familyicon1"].x = (stages == 1) ? ICONS_LEFT_DOUBLE : ICONS_CENTER
-        @sprites["familyicon1"].visible = true
-        if stages == 2
-          baby = species_data.get_baby_species
-          baby_data = GameData::Species.get_species_form(baby, prevo_data.form)
-          if $player.seen?(baby)
-            @sprites["familyicon2"].pbSetParams(baby, @gender, baby_data.form)
-          else
-            @sprites["familyicon2"].species = nil
-          end
-          @sprites["familyicon2"].x = ICONS_LEFT_TRIPLE
-          @sprites["familyicon2"].visible = true
-        else
-          @sprites["familyicon2"].visible = false
-        end
+      @sprites["datapokemon"].visible = false
+      @sprites["movespokemonicon"].visible = false
+    end
+
+    #---------------------------------------------------------------------------
+    # Draws the base stats, their values and their colour bars.
+    #---------------------------------------------------------------------------
+    stats_order = [:HP, :ATTACK, :DEFENSE, :SPECIAL_ATTACK, :SPECIAL_DEFENSE, :SPEED]
+    stat_names = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"]
+    stats_order.each_with_index do |stat_id, i|
+      y = 104 + i * 28
+      textpos.push([_INTL(stat_names[i]), 12, y, :left, base, shadow, :outline])
+      if owned
+        stat = species_data.base_stats[stat_id]
+        textpos.push([_INTL("{1}", stat), 155, y, :right, base, shadow, :outline])
+
+        # Six colour ranges covering the complete 1-255 stat range.
+        colour_row = pbStatColourRow(stat)
+        width = (stat * 145 / 255.0).round
+        width = 1 if width < 1
+        imagepos.push([path + "overlay_stats", 170, 105 + i * 28,
+                       0, colour_row * 18, width, 18])
       end
     end
+
+    # Total is displayed below Speed, with a little extra spacing.
+    if owned
+      textpos.push(
+        [_INTL("Total"), 12, 291, :left, base, shadow, :outline],
+        [_INTL("{1}", species_data.base_stat_total), 155, 291, :right, base, shadow, :outline]
+      )
+    end
+
+    #---------------------------------------------------------------------------
+    # Draws the three vertically stacked buttons.
+    #---------------------------------------------------------------------------
+    buttons = [
+      [:ability, _INTL("Abilities"), 222],
+      [:moves,   _INTL("Moves"),     274],
+      [:item,    _INTL("Items"),     326]
+    ]
+    buttons.each do |cursor, label, y|
+      if @data_page_menu_active && @cursor == cursor
+        # Dedicated selector frame sized to the button area.
+        imagepos.push([path + "data_selector", 321, y - 2, 0, 0, 185, 56])
+      end
+      textpos.push([label, 414, y + 17, :center, base, shadow, :outline])
+    end
+
     pbDrawImagePositions(overlay, imagepos)
     pbDrawTextPositions(overlay, textpos)
+  end
+
+  #-----------------------------------------------------------------------------
+  # Returns the row in overlay_stats corresponding to the stat value.
+  # Six equal colour ranges are used for values from 1 to 255:
+  # red -> orange -> yellow -> light green -> dark green -> blue.
+  #-----------------------------------------------------------------------------
+  def pbStatColourRow(stat)
+    return 0 if stat <= 49
+    return 1 if stat <= 74
+    return 2 if stat <= 99
+    return 3 if stat <= 119
+    return 4 if stat <= 149
+    return 5
   end
 end

@@ -264,10 +264,6 @@ class PokemonSummary_Scene
           when :page_moves
             pbPlayDecisionSE
             dorefresh = pbOptions
-          when :page_ribbons
-            pbPlayDecisionSE
-            pbRibbonSelection
-            dorefresh = true
           else
             if !@inbattle
               pbPlayDecisionSE

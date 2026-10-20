@@ -53,11 +53,11 @@ class MoveRelearner_Scene
       type_rect = Rect.new(0, type_number * 28, 24, 28)
       diff = PluginManager.installed?("[DBK] Terastallization") && @pokemon.tera_type ? 36 : 0
       type_x = (@pokemon.types.length == 1) ? 474 : 446 + (28 * i)
-      overlay.blt(type_x - diff, 68, @typebitmap.bitmap, type_rect)
+      overlay.blt(type_x - diff, 66, @typebitmap.bitmap, type_rect)
     end
     textpos = [
-      [_INTL("Teach which move?"), 16, 38, :left, Color.new(248, 248, 248), Color.new(70, 70, 70)],
-      [@pokemon.name, 336, 38, :left, Color.new(64, 64, 64), Color.new(162, 162, 162)]
+      [_INTL("Teach which move?"), 16, 38, :left, Color.new(248, 248, 248), Color.new(70, 70, 70), :outline],
+      [@pokemon.name, 336, 38, :left, Color.new(248, 248, 248), Color.new(70, 70, 70), :outline]
     ]
     imagepos = []
     if @pokemon.male?
@@ -84,18 +84,18 @@ class MoveRelearner_Scene
       yPos += 64
     end
     imagepos.push(["Graphics/UI/Move Reminder/cursor",
-                   14, 66 + ((@sprites["commands"].index - @sprites["commands"].top_item) * 64)])
+                   6, 66 + ((@sprites["commands"].index - @sprites["commands"].top_item) * 64)])
     selMoveData = GameData::Move.get(@moves[@sprites["commands"].index])
     power = selMoveData.display_damage(@pokemon)
     category = selMoveData.display_category(@pokemon)
     accuracy = selMoveData.display_accuracy(@pokemon)
-    textpos.push([_INTL("Category"), 268, 102, :left, Color.new(64, 64, 64), Color.new(162, 162, 162)])
-    textpos.push([_INTL("Power"), 268, 134, :left, Color.new(64, 64, 64), Color.new(162, 162, 162)])
+    textpos.push([_INTL("Category"), 268, 102, :left, Color.new(248, 248, 248), Color.new(70, 70, 70), :outline])
+    textpos.push([_INTL("Power"), 268, 134, :left, Color.new(248, 248, 248), Color.new(70, 70, 70), :outline])
     textpos.push([power <= 1 ? power == 1 ? "???" : "---" : power.to_s, 498, 134, :right,
-                  Color.new(64, 64, 64), Color.new(162, 162, 162)])
-    textpos.push([_INTL("Accuracy"), 268, 166, :left, Color.new(64, 64, 64), Color.new(162, 162, 162)])
+                  Color.new(248, 248, 248), Color.new(70, 70, 70), :outline])
+    textpos.push([_INTL("Accuracy"), 268, 166, :left, Color.new(248, 248, 248), Color.new(70, 70, 70), :outline])
     textpos.push([accuracy == 0 ? "---" : "#{accuracy}%", 498, 166, :right,
-                  Color.new(64, 64, 64), Color.new(162, 162, 162)])
+                  Color.new(248, 248, 248), Color.new(70, 70, 70), :outline])
     pbDrawTextPositions(overlay, textpos)
     imagepos.push(["Graphics/UI/category", 434, 98, 0, category * 28, 64, 28])
     if @sprites["commands"].index < @moves.length - 1

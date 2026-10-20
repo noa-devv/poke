@@ -32,10 +32,3 @@ UIHandlers.add(:pokedex, :page_area, {
   "layout"    => proc { |species, scene| scene.drawPageArea }
 })
 
-# Forms page.
-UIHandlers.add(:pokedex, :page_forms, { 
-  "name"      => "FORMS",
-  "suffix"    => "forms",
-  "order"     => 30,
-  "layout"    => proc { |species, scene| scene.drawPageForms }
-})

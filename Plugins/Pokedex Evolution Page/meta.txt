@@ -1,5 +1,5 @@
 ﻿Name       = Pokedex Evolution Page
 Version    = 1.0
 Essentials = 21.1
-Requires  = Modular UI Scenes
-Credits    = ChampChar110
+Requires   = Modular UI Scenes
+Credits    = ChampChar110, no_

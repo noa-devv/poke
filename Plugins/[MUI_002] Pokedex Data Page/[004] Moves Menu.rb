@@ -16,7 +16,26 @@ class PokemonPokedexInfo_Scene
         @moveList.push(m)
       end
     when 1  # Tutor moves
-      species_data.get_tutor_moves.each do |m|
+      tutor_moves = species_data.get_tutor_moves.uniq
+      # Sort only the TM/CT-Tutor category by the numeric machine identifier.
+      # Moves without a machine remain after numbered machines, alphabetically.
+      machine_order = {}
+      GameData::Item.each do |item|
+        next if !item.is_machine?
+        next if !item.move
+        move_id = item.move
+        name = item.name.to_s
+        digits = name.scan(/\d+/).last
+        number = digits ? digits.to_i : nil
+        key = number ? [0, number, name] : [1, name]
+        if !machine_order[move_id] || (key <=> machine_order[move_id]) < 0
+          machine_order[move_id] = key
+        end
+      end
+      tutor_moves.sort_by! do |move_id|
+        machine_order[move_id] || [2, GameData::Move.get(move_id).name]
+      end
+      tutor_moves.each do |m|
         next if @moveList.include?(m)
         @moveCommands.push(GameData::Move.get(m).name)
         @moveList.push(m)
@@ -135,7 +154,6 @@ class PokemonPokedexInfo_Scene
     maxPage = pages.length - 1
     @moveListIndex = pages[idxPage]
     @viewingMoves = true
-    pbResetFamilyIcons
     pbSEPlay("GUI storage show party panel")
     pbGenerateMoveList(species_data, special_form)
     pbDrawMoveList
@@ -162,27 +180,10 @@ class PokemonPokedexInfo_Scene
           pbPlayCursorSE
           pbDrawMoveList
         #-----------------------------------------------------------------------
-        # Views all owned species compatible with a highlighted move.
-        elsif Input.trigger?(Input::USE)
-          if @moveListIndex <= 2
-            pbDeactivateWindows(@sprites)
-            pbChooseSpeciesDataList(:move)
-            break if @forceRefresh
-            pbActivateWindow(@sprites, "movecmds")
-          else
-            pbPlayBuzzerSE
-          end
-        #-----------------------------------------------------------------------
-        # Views all species in a similar Egg Group compatible with a highlighted move.
-        elsif Input.trigger?(Input::ACTION)
-          if @moveListIndex <= 2
-            pbDeactivateWindows(@sprites)
-            pbChooseSpeciesDataList(:egg)
-            break if @forceRefresh
-            pbActivateWindow(@sprites, "movecmds")
-          else
-            pbPlayBuzzerSE
-          end
+        # The compatibility submenus were removed with the old Data page
+        # family/Egg Group system. USE/ACTION are therefore inactive here.
+        elsif Input.trigger?(Input::USE) || Input.trigger?(Input::ACTION)
+          pbPlayBuzzerSE
         #-----------------------------------------------------------------------
         # Closes the movelist menu.
         elsif Input.trigger?(Input::BACK)
@@ -191,9 +192,9 @@ class PokemonPokedexInfo_Scene
           @sprites["movecmds"].index = 0
           @sprites["leftarrow"].visible = false
           @sprites["rightarrow"].visible = false
+          @sprites["movespokemonicon"].visible = false
           pbSEPlay("GUI storage hide party panel")
           drawPage(@page)
-          pbDrawDataNotes
           break
         elsif @sprites["movecmds"].index != oldcmd
           pbDrawMoveList
@@ -215,10 +216,11 @@ class PokemonPokedexInfo_Scene
   # Used to draw the move list UI.
   #-----------------------------------------------------------------------------
   def pbDrawMoveList
-    @sprites["familyicon0"].x = 320
-    @sprites["familyicon0"].y = 80
-    @sprites["familyicon0"].visible = true
-    @sprites["itemicon"].item = nil
+    @sprites["datapokemon"].visible = false
+    @sprites["movespokemonicon"].pbSetParams(@species, @gender, @form)
+    @sprites["movespokemonicon"].x = 320
+    @sprites["movespokemonicon"].y = 82
+    @sprites["movespokemonicon"].visible = true
     @sprites["leftarrow"].visible = true
     @sprites["rightarrow"].visible = true
     path = Settings::POKEDEX_DATA_PAGE_GRAPHICS_PATH
@@ -228,7 +230,7 @@ class PokemonPokedexInfo_Scene
     overlay.clear
     drawPageIcons
     base     = Color.new(248, 248, 248)
-    shadow   = Color.new(72, 72, 72)
+    shadow   = Color.new(56, 56, 56)
     base2    = Color.new(88, 88, 80)
     shadow2  = Color.new(168, 184, 184)
     imagepos = []

@@ -5,4 +5,4 @@ Website    = https://www.youtube.com/watch?v=dQw4w9WgXcQ
 Conflicts  = Elite Battle: DX
 Conflicts  = Focus Meter System
 Optional   = Boss Battles EX, 1.0.0
-Credits    = Golisopod User
+Credits    = Golisopod User, no_

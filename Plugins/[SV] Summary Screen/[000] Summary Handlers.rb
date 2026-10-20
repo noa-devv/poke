@@ -39,13 +39,6 @@ UIHandlers.add(:summary, :page_moves, {
   "layout"    => proc { |pkmn, scene| scene.drawPageFour }
 })
 
-# Ribbons page.
-UIHandlers.add(:summary, :page_ribbons, {
-  "name"      => "Ribbons",
-  "suffix"    => "ribbons",
-  "order"     => 50,
-  "layout"    => proc { |pkmn, scene| scene.drawPageFive }
-})
 
 #-------------------------------------------------------------------------------
 # Egg Summary handlers.

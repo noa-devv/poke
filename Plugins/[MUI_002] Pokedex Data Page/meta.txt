@@ -3,4 +3,4 @@ Version    = 2.0.5
 Essentials = 21.1
 Requires   = Modular UI Scenes,2.0.9
 Website    = https://eeveeexpo.com/resources/1380/
-Credits    = Lucidious89
+Credits    = Lucidious89, no_
