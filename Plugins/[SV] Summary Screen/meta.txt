@@ -8,4 +8,4 @@ Optional   = [MUI] Improved Mementos, 1.0.4
 Optional   = [DBK] Animated Pokémon System, 1.0.9
 Optional   = [DBK] Dynamax, 1.1.2
 Optional   = [DBK] Z-Power, 1.1.1
-Credits    = Shashu-Greninja, GameUIDatabase, Lucidious89
+Credits    = Shashu-Greninja, GameUIDatabase, Lucidious89, no_

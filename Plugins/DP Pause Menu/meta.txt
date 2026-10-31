@@ -1,0 +1,5 @@
+Name         = DP PauseMenu
+Version      = 1.5
+Website      = https://eeveeexpo.com/resources/164/
+Credits      = Marin, Maryn (Adapted to v21.1), ChromeValiant (Pokegear, Safari Zone, Bug-Catching compatibility), Spaceemotion (Retire icon), PurpleZaffre (Pokegear icon), no_
+Essentials   = 21.1
