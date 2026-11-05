@@ -43,7 +43,7 @@ class Battle::Scene
     imagePos = [[@path + "pokeball_bg", 0, ypos]]
     imagePos.push([@path + "pokeball_desc", 0, ypos - 69]) if showDesc
     textY = (showDesc) ? ypos - 55 : ypos + 14
-    action = (showDesc) ? _INTL("Z: Hide") : _INTL("Z: Details")
+    action = (showDesc) ? _INTL("D: Hide") : _INTL("D: Details")
     item = GameData::Item.try_get(items[index][0])
     name = (item) ? _INTL("{1}", item.name) : _INTL("Return")
     desc = (item) ? item.description : _INTL("Return to the command menu.")
@@ -112,7 +112,7 @@ class Battle::Scene
           break
         end
         pbShowWindow(COMMAND_BOX)
-      elsif Input.trigger?(Input::ACTION)
+      elsif Input.trigger?(Input::SPECIAL)
         showDesc = !showDesc
         pbPlayDecisionSE
         dorefresh = true

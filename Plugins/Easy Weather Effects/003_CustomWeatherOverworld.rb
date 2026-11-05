@@ -290,6 +290,11 @@ class Game_Screen
   alias owsfx_weather weather unless method_defined?(:owsfx_weather)
 
   def weather(type, power, duration)
+		unless GameData::Weather.try_get(type)
+			type = :None
+			power = 0
+		end
+	
     old_type = @weather_type
     owsfx_weather(type, power, duration)
 
